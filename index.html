@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AXIOM — Advanced Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas">
+    <canvas id="particleCanvas"></canvas>
+    <div class="bg-gradient-mesh"></div>
+  </div>
+
+  <!-- Startup Splash -->
+  <div id="splashScreen" class="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo">
+        <span class="splash-icon">⬡</span>
+        <span class="splash-name">AXIOM</span>
+      </div>
+      <div class="splash-bar"><div class="splash-fill"></div></div>
+      <p class="splash-tagline">Advanced Smart Calculator</p>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Main App -->
+  <div id="app" class="app hidden">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="brand-icon">⬡</span>
+        <span class="brand-name">AXIOM</span>
+      </div>
+      <div class="header-controls">
+        <div class="clock-widget">
+          <span id="clockTime" class="clock-time">00:00</span>
+          <span id="clockDate" class="clock-date">Mon, Jan 1</span>
+        </div>
+        <button id="soundToggle" class="ctrl-btn" title="Toggle Sound">
+          <span id="soundIcon">🔊</span>
+        </button>
+        <button id="themeToggle" class="ctrl-btn" title="Toggle Theme">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="calculator">
+        <span>Calculator</span>
+      </button>
+      <button class="tab-btn" data-tab="scientific">
+        <span>Scientific</span>
+      </button>
+      <button class="tab-btn" data-tab="currency">
+        <span>Currency</span>
+      </button>
+      <button class="tab-btn" data-tab="history">
+        <span>History</span>
+        <span id="historyBadge" class="badge hidden">0</span>
+      </button>
+    </nav>
+
+    <!-- ====== CALCULATOR TAB ====== -->
+    <section id="tab-calculator" class="tab-content active">
+      <div class="calc-wrapper">
+
+        <!-- Display -->
+        <div class="calc-display">
+          <div class="display-top">
+            <span id="memIndicator" class="mem-indicator hidden">M</span>
+            <span id="angleMode" class="angle-mode">DEG</span>
+          </div>
+          <div id="calcExpression" class="calc-expression">0</div>
+          <div id="calcResult" class="calc-result"></div>
+          <div class="display-actions">
+            <button class="display-action-btn" id="copyBtn" title="Copy result">⎘ Copy</button>
+            <button class="display-action-btn" id="voiceBtn" title="Voice input">🎤 Voice</button>
+          </div>
+        </div>
+
+        <!-- Memory Row -->
+        <div class="memory-row">
+          <button class="mem-btn" data-action="mc">MC</button>
+          <button class="mem-btn" data-action="mr">MR</button>
+          <button class="mem-btn" data-action="m+">M+</button>
+          <button class="mem-btn" data-action="m-">M−</button>
+        </div>
+
+        <!-- Keypad -->
+        <div class="keypad">
+          <button class="key key-fn" data-action="clear">AC</button>
+          <button class="key key-fn" data-action="sign">±</button>
+          <button class="key key-fn" data-action="percent">%</button>
+          <button class="key key-op" data-action="÷">÷</button>
+
+          <button class="key key-num" data-action="7">7</button>
+          <button class="key key-num" data-action="8">8</button>
+          <button class="key key-num" data-action="9">9</button>
+          <button class="key key-op" data-action="×">×</button>
+
+          <button class="key key-num" data-action="4">4</button>
+          <button class="key key-num" data-action="5">5</button>
+          <button class="key key-num" data-action="6">6</button>
+          <button class="key key-op" data-action="−">−</button>
+
+          <button class="key key-num" data-action="1">1</button>
+          <button class="key key-num" data-action="2">2</button>
+          <button class="key key-num" data-action="3">3</button>
+          <button class="key key-op" data-action="+">+</button>
+
+          <button class="key key-num key-wide" data-action="0">0</button>
+          <button class="key key-num" data-action=".">.</button>
+          <button class="key key-eq" data-action="=">=</button>
+        </div>
+
+        <!-- Extra Row -->
+        <div class="extra-row">
+          <button class="key key-extra" data-action="backspace">⌫ Del</button>
+          <button class="key key-extra" data-action="sqrt">√</button>
+          <button class="key key-extra" data-action="square">x²</button>
+          <button class="key key-extra" data-action="pow">xʸ</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====== SCIENTIFIC TAB ====== -->
+    <section id="tab-scientific" class="tab-content">
+      <div class="calc-wrapper">
+        <div class="calc-display">
+          <div class="display-top">
+            <span id="sciMemIndicator" class="mem-indicator hidden">M</span>
+            <button id="angleModeToggle" class="angle-mode-btn">DEG</button>
+          </div>
+          <div id="sciExpression" class="calc-expression">0</div>
+          <div id="sciResult" class="calc-result"></div>
+        </div>
+
+        <div class="sci-keypad">
+          <!-- Row 1 -->
+          <button class="key key-sci" data-action="sin">sin</button>
+          <button class="key key-sci" data-action="cos">cos</button>
+          <button class="key key-sci" data-action="tan">tan</button>
+          <button class="key key-sci" data-action="log">log</button>
+          <button class="key key-sci" data-action="ln">ln</button>
+
+          <!-- Row 2 -->
+          <button class="key key-sci" data-action="asin">sin⁻¹</button>
+          <button class="key key-sci" data-action="acos">cos⁻¹</button>
+          <button class="key key-sci" data-action="atan">tan⁻¹</button>
+          <button class="key key-sci" data-action="log2">log₂</button>
+          <button class="key key-sci" data-action="exp">eˣ</button>
+
+          <!-- Row 3 -->
+          <button class="key key-sci" data-action="sqrt">√x</button>
+          <button class="key key-sci" data-action="cbrt">∛x</button>
+          <button class="key key-sci" data-action="square">x²</button>
+          <button class="key key-sci" data-action="cube">x³</button>
+          <button class="key key-sci" data-action="factorial">n!</button>
+
+          <!-- Row 4 -->
+          <button class="key key-sci" data-action="pi">π</button>
+          <button class="key key-sci" data-action="e">e</button>
+          <button class="key key-sci" data-action="pow">xʸ</button>
+          <button class="key key-sci" data-action="inv">1/x</button>
+          <button class="key key-sci" data-action="abs">|x|</button>
+
+          <!-- Row 5: standard -->
+          <button class="key key-fn" data-action="clear-sci">AC</button>
+          <button class="key key-fn" data-action="sign-sci">±</button>
+          <button class="key key-fn" data-action="percent-sci">%</button>
+          <button class="key key-op" data-action="÷-sci">÷</button>
+          <button class="key key-fn" data-action="backspace-sci">⌫</button>
+
+          <!-- Row 6 -->
+          <button class="key key-num" data-action="7-sci">7</button>
+          <button class="key key-num" data-action="8-sci">8</button>
+          <button class="key key-num" data-action="9-sci">9</button>
+          <button class="key key-op" data-action="×-sci">×</button>
+          <button class="key key-num" data-action="(-sci">(</button>
+
+          <!-- Row 7 -->
+          <button class="key key-num" data-action="4-sci">4</button>
+          <button class="key key-num" data-action="5-sci">5</button>
+          <button class="key key-num" data-action="6-sci">6</button>
+          <button class="key key-op" data-action="−-sci">−</button>
+          <button class="key key-num" data-action=")-sci">)</button>
+
+          <!-- Row 8 -->
+          <button class="key key-num" data-action="1-sci">1</button>
+          <button class="key key-num" data-action="2-sci">2</button>
+          <button class="key key-num" data-action="3-sci">3</button>
+          <button class="key key-op" data-action="+-sci">+</button>
+          <button class="key key-eq" data-action="=-sci" style="grid-row: span 2;">=</button>
+
+          <!-- Row 9 -->
+          <button class="key key-num" style="grid-column: span 2;" data-action="0-sci">0</button>
+          <button class="key key-num" data-action=".-sci">.</button>
+          <button class="key key-op" data-action="^-sci">^</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== CURRENCY TAB ====== -->
+    <section id="tab-currency" class="tab-content">
+      <div class="currency-wrapper">
+        <div class="currency-header">
+          <h2 class="currency-title">Currency Converter</h2>
+          <p class="currency-subtitle">Live exchange rates</p>
+          <div id="rateUpdateTime" class="rate-update-time">Fetching rates…</div>
+        </div>
+
+        <div class="currency-card">
+          <div class="currency-field">
+            <label class="currency-label">From</label>
+            <div class="currency-input-row">
+              <select id="fromCurrency" class="currency-select">
+                <option value="USD">🇺🇸 USD — US Dollar</option>
+                <option value="INR">🇮🇳 INR — Indian Rupee</option>
+                <option value="EUR">🇪🇺 EUR — Euro</option>
+                <option value="GBP">🇬🇧 GBP — British Pound</option>
+                <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+                <option value="CNY">🇨🇳 CNY — Chinese Yuan</option>
+                <option value="AED">🇦🇪 AED — UAE Dirham</option>
+                <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+                <option value="KRW">🇰🇷 KRW — South Korean Won</option>
+                <option value="PKR">🇵🇰 PKR — Pakistani Rupee</option>
+                <option value="BDT">🇧🇩 BDT — Bangladeshi Taka</option>
+                <option value="LKR">🇱🇰 LKR — Sri Lankan Rupee</option>
+                <option value="NPR">🇳🇵 NPR — Nepalese Rupee</option>
+                <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+                <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+              </select>
+              <input type="number" id="fromAmount" class="currency-amount" value="1" min="0" step="any" />
+            </div>
+          </div>
+
+          <button class="swap-btn" id="swapCurrency" title="Swap currencies">
+            <span class="swap-icon">⇅</span>
+          </button>
+
+          <div class="currency-field">
+            <label class="currency-label">To</label>
+            <div class="currency-input-row">
+              <select id="toCurrency" class="currency-select">
+                <option value="USD">🇺🇸 USD — US Dollar</option>
+                <option value="INR" selected>🇮🇳 INR — Indian Rupee</option>
+                <option value="EUR">🇪🇺 EUR — Euro</option>
+                <option value="GBP">🇬🇧 GBP — British Pound</option>
+                <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+                <option value="CNY">🇨🇳 CNY — Chinese Yuan</option>
+                <option value="AED">🇦🇪 AED — UAE Dirham</option>
+                <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+                <option value="KRW">🇰🇷 KRW — South Korean Won</option>
+                <option value="PKR">🇵🇰 PKR — Pakistani Rupee</option>
+                <option value="BDT">🇧🇩 BDT — Bangladeshi Taka</option>
+                <option value="LKR">🇱🇰 LKR — Sri Lankan Rupee</option>
+                <option value="NPR">🇳🇵 NPR — Nepalese Rupee</option>
+                <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+                <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+              </select>
+              <div id="toAmount" class="currency-result">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="rateDisplay" class="rate-display">
+          <span id="rateText">Loading exchange rates…</span>
+        </div>
+
+        <div class="rate-grid" id="rateGrid">
+          <!-- populated dynamically -->
+        </div>
+
+        <div id="currencyError" class="currency-error hidden">
+          ⚠️ Could not fetch live rates. Using cached fallback rates.
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== HISTORY TAB ====== -->
+    <section id="tab-history" class="tab-content">
+      <div class="history-wrapper">
+        <div class="history-header">
+          <h2 class="history-title">Calculation History</h2>
+          <button id="clearHistory" class="clear-history-btn">Clear All</button>
+        </div>
+        <div id="historyList" class="history-list">
+          <div class="history-empty">
+            <span class="history-empty-icon">📋</span>
+            <p>No calculations yet.</p>
+            <p class="history-empty-sub">Start computing to see history here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /app -->
+
+  <script src="script.js"></script>
+</body>
+</html>
